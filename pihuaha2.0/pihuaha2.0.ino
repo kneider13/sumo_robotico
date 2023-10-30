@@ -105,7 +105,7 @@ void gris_2 () {
    
 void loop() {
   
-  cm = lecturaDisUltrasonido(A5, A4);
+  cm = lecturaDisUltrasonido(A5, A4); // Le enviamos la lectura de cm a los pines analógicos/digitales A5/A4 19/18 respectivamente
   Serial.print(cm);
   Serial.println("cm");
   
