@@ -11,8 +11,6 @@
 long cm = 0;
 
 void setup() {
-  
-  Serial.begin(9600);
 
   pinMode(7, OUTPUT);
   pinMode(8, OUTPUT);
@@ -23,12 +21,14 @@ void setup() {
   pinMode(10, INPUT);
   pinMode(4, INPUT);
   pinMode(2, INPUT);
+
+  Serial.begin(9600);
 } 
 
-// Función que retorna la distancia en "cm" del sensor de ultrasonido.
-long lecturaDisUltrasonido(int triggerPin, int echoPin) {
+// Función que retorna la distancia en "cm" del sensor de ultrasonido
+long ultrasonic_sensor (int triggerPin, int echoPin) {
   
-  pinMode(triggerPin, OUTPUT); 
+  pinMode(triggerPin, OUTPUT);
   digitalWrite(triggerPin, LOW);
   delayMicroseconds(2);
   digitalWrite(triggerPin, HIGH);
@@ -36,11 +36,11 @@ long lecturaDisUltrasonido(int triggerPin, int echoPin) {
   digitalWrite(triggerPin, LOW);
   pinMode(echoPin, INPUT);
 
-  return (pulseIn(echoPin, HIGH)*0.01723);
+  return (pulseIn(echoPin, HIGH)*0.01723); // Función para medir la duración del pulso en el pin echoPin cuando el nivel lógico es alto (HIGH) y pasarlo a cm
 }
 
-// Función de movimiento para el puente H: ambos motores avanzan.
-void avanza() {
+// Función de movimiento para el puente H: ambos motores avanzan
+void forward_robot() {
 
   digitalWrite(5, HIGH);
   digitalWrite(6, HIGH);
@@ -50,8 +50,8 @@ void avanza() {
   digitalWrite(8, LOW);
 }
   
-// Función de movimiento para el puente H: ambos motores retroceden.
-void retrocede() {
+// Función de movimiento para el puente H: ambos motores retroceden
+void reverse_robot() {
 
   digitalWrite(5,HIGH);
   digitalWrite(6,HIGH);
@@ -62,8 +62,8 @@ void retrocede() {
 }
 
 // Función de movimiento para el puente H:
-// un motor gire hacia un sentido y el otro al sentido contrario (giro hacia la derecha).
-void derecha() {
+// un motor gire hacia un sentido y el otro al sentido contrario (giro hacia la derecha)
+void robot_right() {
 
   digitalWrite(5, HIGH);                       
   digitalWrite(6, HIGH);
@@ -74,8 +74,8 @@ void derecha() {
 }
 
 // Función de movimiento para el puente H:
-// un motor gire hacia un sentido y el otro al sentido contrario (giro hacia la izquierda).
-void izquierda() {
+// un motor gire hacia un sentido y el otro al sentido contrario (giro hacia la izquierda)
+void robot_left() {
 
   digitalWrite(5, HIGH);                               
   digitalWrite(6, HIGH);
@@ -85,51 +85,51 @@ void izquierda() {
   digitalWrite(8, LOW);
 }
   
-// Función para los sensores infrarrojos, al detectar blanco retrocede y gira hacia la derecha.
-void gris_1 () {
+// Función para los sensores infrarrojos, al detectar blanco retrocede y gira hacia la derecha
+void gray_sensor_1 () {
     
-  retrocede();
+  reverse_robot();
   delay(900);
-  derecha();
+  robot_right();
   delay(800);
 }
 
-// Función para los sensores infrarrojos, al detectar blanco retrocede y gira hacia la izquierda.
-void gris_2 () {                      
+// Función para los sensores infrarrojos, al detectar blanco retrocede y gira hacia la izquierda
+void gray_sensor_2 () {                      
 
-  retrocede();
+  reverse_robot();
   delay(900);
-  izquierda();                        
+  robot_left();                        
   delay(800);
 }
    
 void loop() {
   
-  cm = lecturaDisUltrasonido(A5, A4); // Le enviamos la lectura de cm a los pines analógicos/digitales A5/A4 19/18 respectivamente
+  cm = ultrasonic_sensor(A5, A4); // Le enviamos la lectura de cm a los pines analógicos/digitales A5/A4 19/18 respectivamente
   Serial.print(cm);
   Serial.println("cm");
   
   if (digitalRead(2) == LOW) {
-    gris_1 ();
+    gray_sensor_1 ();
     delay(10); 
   }
   
   else if (digitalRead(4) == LOW) {
-    gris_2 ();
+    gray_sensor_2 ();
     delay(10); 
   }
  
-  else if(cm <= 45) {
-    avanza();
+  else if (cm <= 45) {
+    forward_robot();
   }
  
   else if (digitalRead(10) == LOW) {
-    retrocede();
+    reverse_robot();
     delay(10); 
   }
 
   else {
-    izquierda();
+    robot_left();
     delay(10);
   }
 }
